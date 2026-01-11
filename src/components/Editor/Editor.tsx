@@ -6,6 +6,7 @@ import Underline from '@tiptap/extension-underline'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { PaginationExtension } from './extensions/PaginationExtension'
+import { PageIndicator } from '../PageIndicator'
 import { Bold, Italic, Heading1, Heading2, List, ListOrdered } from 'lucide-react'
 // Editor styles are handled in global.css
 
@@ -93,11 +94,14 @@ const Editor = () => {
                 <EditorContent editor={editor} />
             </div>
 
-            {/* Print Instructions Footer */}
-            <div className="fixed bottom-4 right-4 bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-sm text-gray-600 max-w-xs print:hidden">
-                <p className="font-semibold mb-1">Pagination Demo</p>
-                <p>Type content to see automatic page breaks (gray gaps).</p>
-                <p className="mt-1">Press <strong>Ctrl+P</strong> to verify clean printing.</p>
+            {/* Footer Info */}
+            <div className="fixed bottom-4 right-4 flex flex-col items-end gap-2 print:hidden z-50">
+                <PageIndicator editor={editor} />
+                <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-sm text-gray-600 max-w-xs">
+                    <p className="font-semibold mb-1">Pagination Demo</p>
+                    <p>Type content to see automatic page breaks (gray gaps).</p>
+                    <p className="mt-1">Press <strong>Ctrl+P</strong> to verify clean printing.</p>
+                </div>
             </div>
         </div>
     )

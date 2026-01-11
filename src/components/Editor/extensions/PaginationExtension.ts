@@ -7,7 +7,15 @@ const paginationKey = new PluginKey('pagination')
 export const PaginationExtension = Extension.create({
     name: 'pagination',
 
+    addStorage() {
+        return {
+            pages: 1,
+        }
+    },
+
     addProseMirrorPlugins() {
+        const component = this
+
         return [
             new Plugin({
                 key: paginationKey,
@@ -53,6 +61,7 @@ export const PaginationExtension = Extension.create({
                                 if (current && current.find().length > 0) {
                                     view.dispatch(view.state.tr.setMeta('pagination', DecorationSet.empty))
                                 }
+                                component.storage.pages = 1
                                 return
                             }
 
@@ -106,6 +115,11 @@ export const PaginationExtension = Extension.create({
                                         break
                                     }
                                 }
+                            }
+
+                            // Update storage if changed
+                            if (component.storage.pages !== pageCount) {
+                                component.storage.pages = pageCount
                             }
 
                             if (hasChanged) {
