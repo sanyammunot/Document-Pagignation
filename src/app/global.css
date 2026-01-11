@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+:root {
+  --page-width: 8.5in;
+  --page-height: 11in;
+  --page-margin: 1in;
+}
+
+body {
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+}
+
+/* 
+  Container to center the 'Page' 
+  We use a specific class for the editor wrapper
+*/
+.editor-viewport {
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+/* 
+  The "Page" Look
+  Tiptap's root element is .ProseMirror
+*/
+.ProseMirror {
+  outline: none;
+  min-height: var(--page-height);
+  width: var(--page-width);
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: var(--page-margin);
+  margin-bottom: 2rem;
+  box-sizing: border-box;
+}
+
+/* Typography Enhancements within Editor */
+.ProseMirror p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+/* 
+  Visual Page Break Widget 
+  Strategy:
+  1. The widget takes up space equal to: Bottom Margin (1in) + Gap (20px) + Top Margin (1in)
+  2. The background is transparent so the white "margins" are visible from the main container.
+  3. We draw a Gray Bar in the middle to represent the separation.
+*/
+.page-break {
+  /* Height = 1in + 20px + 1in = 96px + 20px + 96px = 212px */
+  height: calc(2 * var(--page-margin) + 20px);
+  width: calc(100% + 2 * var(--page-margin));
+  margin-left: calc(-1 * var(--page-margin));
+  /* Pull out to full width */
+  margin-right: calc(-1 * var(--page-margin));
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Critical: Transparent background lets the white paper show as 'margins' */
+  background-color: transparent;
+
+  user-select: none;
+  pointer-events: none;
+}
+
+/* The Gray "Hole" / Gap */
+.page-break::after {
+  content: 'Page Break';
+
+  /* Dimensions of the gap */
+  height: 20px;
+  width: 100%;
+
+  background-color: #f3f4f6;
+  /* Gray Body BG */
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 10px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 
+  PRINT STYLES 
+*/
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    background: white;
+  }
+
+  .editor-viewport {
+    display: block;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    width: 100%;
+  }
+
+  .ProseMirror {
+    box-shadow: none;
+    margin: 0;
+    padding: var(--page-margin);
+    width: 100%;
+    min-height: auto;
+  }
+
+  /* 
+    The Page Break Widget
+    In Print: It acts as the "Top Margin" of the NEW page.
+    break-before: page -> Puts this element at the start of Page 2.
+    height: 1in -> Pushes the text down 1 inch.
+    background: transparent -> Invisible.
+  */
+  .page-break {
+    height: 1in !important;
+    margin: 0;
+    border: none;
+    background: transparent;
+    break-before: page;
+    page-break-before: always;
+    display: block !important;
+  }
+
+  .page-break::after {
+    display: none;
+  }
+}
