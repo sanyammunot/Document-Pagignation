@@ -50,9 +50,10 @@ export const PaginationExtension = Extension.create({
 
                             const PAGE_HEIGHT = 1056 // 11in
                             const PAGE_MARGIN = 96   // 1in
-                            // Increase content height to ~1000 to prevent premature breaks
-                            // The printer often fits more text than the screen pixel-to-inch conversion suggests
-                            const CONTENT_HEIGHT = 1000
+                            // Tune content height to ~1030px to fill the visual gap.
+                            // The strict 96dpi calculation often creates a gap because screen fonts render taller than print fonts.
+                            // This value is empirically tuned to match standard print drivers.
+                            const CONTENT_HEIGHT = 1030
                             const BREAK_HEIGHT = (PAGE_MARGIN * 2) + 20
 
                             const dom = view.dom
