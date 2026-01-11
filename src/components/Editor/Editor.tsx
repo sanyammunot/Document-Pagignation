@@ -31,6 +31,16 @@ const Editor = () => {
                 class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
             },
         },
+        onUpdate: ({ editor }) => {
+            localStorage.setItem('editor-content', editor.getHTML())
+        },
+        onCreate: ({ editor }) => {
+            const savedContent = localStorage.getItem('editor-content')
+            if (savedContent) {
+                // If we find saved content, overwrite the default initial content
+                editor.commands.setContent(savedContent)
+            }
+        },
     })
 
     if (!editor) {
