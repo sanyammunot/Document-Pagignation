@@ -46,6 +46,12 @@ body {
   line-height: 1.6;
 }
 
+.ProseMirror a {
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .ProseMirror h1 {
   font-size: 2em;
   font-weight: bold;
