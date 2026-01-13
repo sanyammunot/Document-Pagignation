@@ -267,18 +267,28 @@ export const MenuBar: React.FC<MenuBarProps> = ({ editor }) => {
         <ListOrdered size={16} />
       </Button>
       <Button
-        onClick={() => editor.chain().focus().lift('listItem').run()} // sink/lift logic handles indent/outdent mostly for lists
-        // For paragraphs, indent extensions are needed but not standard in starter kit without configuration. 
-        // Tiptap doesn't have a default "indent" for paragraphs in StarterKit without "extension-indent" (community).
-        // I will skip Indent/Outdent for paragraphs if I don't have the extension, or just use it for lists.
-        disabled={!editor.can().liftListItem('listItem') && !editor.can().lift('listItem')}
+        onClick={() => {
+          if (editor.can().liftListItem('listItem')) {
+            editor.chain().focus().liftListItem('listItem').run()
+          } else {
+            editor.chain().focus().outdent().run()
+          }
+        }}
+        // Check both capabilities (list lift OR generic outdent)
+        disabled={!editor.can().liftListItem('listItem') && !editor.can().outdent()}
         title="Outdent"
       >
         <Outdent size={16} />
       </Button>
       <Button
-        onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
-        disabled={!editor.can().sinkListItem('listItem')}
+        onClick={() => {
+          if (editor.can().sinkListItem('listItem')) {
+            editor.chain().focus().sinkListItem('listItem').run()
+          } else {
+            editor.chain().focus().indent().run()
+          }
+        }}
+        disabled={!editor.can().sinkListItem('listItem') && !editor.can().indent()}
         title="Indent"
       >
         <Indent size={16} />

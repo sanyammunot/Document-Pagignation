@@ -11,6 +11,7 @@ import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Highlight from '@tiptap/extension-highlight'
 import { PaginationExtension } from './extensions/PaginationExtension'
+import { IndentExtension } from './extensions/IndentExtension'
 import { PageIndicator } from '../PageIndicator'
 import { MenuBar } from '../MenuBar'
 // Editor styles are handled in global.css
@@ -33,6 +34,7 @@ const Editor = () => {
             }),
             Highlight.configure({ multicolor: true }),
             PaginationExtension,
+            IndentExtension,
         ],
         content: `
       <h1>Document Title</h1>
