@@ -40,13 +40,9 @@ export const PaginationExtension = Extension.create({
                     },
                 },
                 view(editorView) {
-                    // Helper to debounce or throttle if needed, but for now we run on every docile update + animation frame
 
                     return {
                         update(view, prevState) {
-                            // Optimization: If document structure hasn't changed, maybe skip? 
-                            // But layout might change due to CSS or other factors. 
-                            // We'll rely on the check at the end to avoid loops.
 
                             const PAGE_HEIGHT = 1056 // 11in
                             const PAGE_MARGIN = 96   // 1in
@@ -86,29 +82,10 @@ export const PaginationExtension = Extension.create({
                                 })
 
                                 if (posInfo) {
-                                    // Check for premature breaks (ghosts from deletion)
-                                    // If we find an existing break at this exact position...
                                     const existing = currentDecos.find((d: Decoration) => d.from === posInfo.pos)
                                     if (existing) {
                                         const coords = view.coordsAtPos(posInfo.pos)
-                                        // ...and that break is visually much higher than where we WANT to break (currentY)
-                                        // (e.g. break is at 500px, but we are looking for break at 1000px)
                                         if (coords.top < currentY - 50) {
-                                            // Then this break is "stuck" higher up. We must NOT add it to the new set.
-                                            // By detecting it and skipping it, we effectively remove it.
-                                            // Logic:
-                                            // 1. Skip adding to 'pages'
-                                            // 2. Continue loop? 
-                                            // If we continue, we look for page 2 break at 2000px.
-                                            // But we haven't broken page 1 yet!
-                                            // Ideally we want to "retry" finding the break for Page 1?
-                                            // Actually, if we remove this break, the text will reflow.
-                                            // The NEXT update cycle will find the correct break.
-                                            // So we just need to ensure we don't addTHIS bad break.
-
-                                            // However, we must continue calculating subsequent pages if strictly needed,
-                                            // but for a reflow, just letting it disappear is properly enough.
-                                            // Let's just skip this one.
                                             currentY += (BREAK_HEIGHT + CONTENT_HEIGHT)
                                             pageCount++
                                             continue
@@ -124,18 +101,9 @@ export const PaginationExtension = Extension.create({
                                     pages.push(widget)
                                 }
 
-                                // Jump: The break widget ITSELF consumes the 'bottom margin p1' + 'top margin p2'
-                                // So we jump the widget height + the next page's allowed content height
                                 currentY += (BREAK_HEIGHT + CONTENT_HEIGHT)
                                 pageCount++
                             }
-
-                            // Diff check: If the new decorations are effectively same as old, do NOT dispatch
-                            // JSON stringify is expensive but distinct sets of widgets are hard to compare shallowly.
-                            // We can optimize by count and positions.
-
-                            // Simple heuristic: if count differs, update. 
-                            // If same count, check exact positions.
                             let hasChanged = false
                             if (currentDecos.length !== pages.length) {
                                 hasChanged = true

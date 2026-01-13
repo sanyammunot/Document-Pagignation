@@ -78,13 +78,6 @@ body {
   margin-bottom: 1em;
 }
 
-/* 
-  Visual Page Break Widget 
-  Strategy:
-  1. The widget takes up space equal to: Bottom Margin (1in) + Gap (20px) + Top Margin (1in)
-  2. The background is transparent so the white "margins" are visible from the main container.
-  3. We draw a Gray Bar in the middle to represent the separation.
-*/
 .page-break {
   /* Height = 1in + 20px + 1in = 96px + 20px + 96px = 212px */
   height: calc(2 * var(--page-margin) + 20px);
@@ -156,13 +149,6 @@ body {
     min-height: auto;
   }
 
-  /* 
-    The Page Break Widget
-    In Print: It acts as the "Top Margin" of the NEW page.
-    break-before: page -> Puts this element at the start of Page 2.
-    height: 1in -> Pushes the text down 1 inch.
-    background: transparent -> Invisible.
-  */
   .page-break {
     height: 1in !important;
     margin: 0;
