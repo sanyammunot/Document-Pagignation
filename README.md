@@ -13,7 +13,7 @@ The application is built using:
 ### Key Features
 *   **Real-time Pagination**: Visual page breaks appear automatically as you type.
 *   **Print-ready**: Hitting `Ctrl+P` produces a clean, paginated document with standard margins.
-*   **Rich Text Formatting**: Bold, Italic, Lists, and Headings.
+*   **Rich Text Formatting**: Bold, Italic, Underline, Highlight, Color, Lists, and Headings, etc.
 *   **Page Info**: Total page count indicator in the footer.
 *   **Persistence**: Auto-saves content to `localStorage` to prevent data loss.
 
@@ -44,7 +44,7 @@ The core logic resides in a custom ProseMirror extension (`PaginationExtension.t
 Browsers do not render text on screen exactly the same way they render it for print.
 *   **The Issue**: A line of text might take up 20px on screen but only 18px on paper.
 *   **The Trade-off**: If we strictly enforced the mathematical limit (9 inches = 864px), the screen would show a large empty gap at the bottom, because the printer could actually fit more text.
-*   **The Solution**: We "tuned" the content height to **1030px** (approx 10.7 inches of screen pixels). This trick fills the visual gap on the printed page, making it look professional, at the risk of slight discrepancies if the user has a very unusual non-standard font setup.
+*   **The Solution**: "tuned" the content height to **1030px** (approx 10.7 inches of screen pixels). This trick fills the visual gap on the printed page, making it look professional, at the risk of slight discrepancies if the user has a very unusual non-standard font setup.
 
 ### 2. Performance
 *   Calculating `posAtCoords` for every page on every keystroke (`update` loop) is computationally expensive for extremely long documents (100+ pages).
@@ -66,4 +66,6 @@ With more time, I would improve:
     For documents with hundreds of pages, rendering all ProseMirror decorations at once can be slow. Implementing a viewport-based virtualization (only calculating pages currently in view) would significantly boost performance.
 
 3.  **Header/Footer Support**:
-    While we have page numbers, full support for custom headers and footers (editable areas repeated on every page) would make this a complete word processor replacement.
+    While we have page numbers, full support for custom headers and footers (editable areas repeated on every page) would make this a complete word processor replacement."
+
+**AI tools used**: Antigravity, Cursor, Claude, ChatGPT
