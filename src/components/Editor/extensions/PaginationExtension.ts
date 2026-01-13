@@ -59,9 +59,11 @@ export const PaginationExtension = Extension.create({
                             const dom = view.dom
                             const totalHeight = dom.scrollHeight
 
+                            const currentState = paginationKey.getState(view.state)
+                            const currentDecos = currentState ? currentState.find() : []
+
                             if (totalHeight < PAGE_HEIGHT) {
-                                const current = paginationKey.getState(view.state)
-                                if (current && current.find().length > 0) {
+                                if (currentDecos.length > 0) {
                                     view.dispatch(view.state.tr.setMeta('pagination', DecorationSet.empty))
                                 }
                                 component.storage.pages = 1
@@ -84,6 +86,35 @@ export const PaginationExtension = Extension.create({
                                 })
 
                                 if (posInfo) {
+                                    // Check for premature breaks (ghosts from deletion)
+                                    // If we find an existing break at this exact position...
+                                    const existing = currentDecos.find((d: Decoration) => d.from === posInfo.pos)
+                                    if (existing) {
+                                        const coords = view.coordsAtPos(posInfo.pos)
+                                        // ...and that break is visually much higher than where we WANT to break (currentY)
+                                        // (e.g. break is at 500px, but we are looking for break at 1000px)
+                                        if (coords.top < currentY - 50) {
+                                            // Then this break is "stuck" higher up. We must NOT add it to the new set.
+                                            // By detecting it and skipping it, we effectively remove it.
+                                            // Logic:
+                                            // 1. Skip adding to 'pages'
+                                            // 2. Continue loop? 
+                                            // If we continue, we look for page 2 break at 2000px.
+                                            // But we haven't broken page 1 yet!
+                                            // Ideally we want to "retry" finding the break for Page 1?
+                                            // Actually, if we remove this break, the text will reflow.
+                                            // The NEXT update cycle will find the correct break.
+                                            // So we just need to ensure we don't addTHIS bad break.
+
+                                            // However, we must continue calculating subsequent pages if strictly needed,
+                                            // but for a reflow, just letting it disappear is properly enough.
+                                            // Let's just skip this one.
+                                            currentY += (BREAK_HEIGHT + CONTENT_HEIGHT)
+                                            pageCount++
+                                            continue
+                                        }
+                                    }
+
                                     const widget = Decoration.widget(posInfo.pos, (view) => {
                                         const div = document.createElement('div')
                                         div.className = 'page-break'
@@ -102,9 +133,6 @@ export const PaginationExtension = Extension.create({
                             // Diff check: If the new decorations are effectively same as old, do NOT dispatch
                             // JSON stringify is expensive but distinct sets of widgets are hard to compare shallowly.
                             // We can optimize by count and positions.
-
-                            const currentState = paginationKey.getState(view.state)
-                            const currentDecos = currentState ? currentState.find() : []
 
                             // Simple heuristic: if count differs, update. 
                             // If same count, check exact positions.
